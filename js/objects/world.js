@@ -1,21 +1,42 @@
 import {Player} from "./player";
 import {Info} from "./info"
 import {Laser} from "./laser";
+import {Enemy} from "./enemy"
 
 
 export class World {
     constructor() {
         // Создадим игрока
-        this.player = new Player(0, 0)
-        this.lasers = [new Laser(0, 0, 0, 0)]
+        this.player = new Player(0, 0);
+        this.lasers = [];
+        this.enemies = [];
         // создадид массив лазеров
 
     }
-
-
     click(x, y){
         this.lasers.push(new Laser(this.player.x, this.player.y, x, y))
-    }
+    };
+
+    add_enemy = () => {
+        this.enemies.push(new Enemy(getRandomInt(0, window.innerWidth), getRandomInt(0, window.innerHeight)))
+
+    };
+    death = () => {
+        this.lasers = [];
+        this.enemies = [];
+        this.player.health = 3;
+        this.player.score = 0;
+        this.player.x = window.innerWidth / 2;
+        this.player.y = window.innerHeight / 2;
+    };
+    delete_enemy = (enemy) => {
+        this.enemies.splice(this.enemies.indexOf(enemy), 1)
+        this.player.score += 10
+    };
+
+    delete_laser = (laser) => {
+        this.lasers.splice(this.lasers.indexOf(laser), 1)
+    };
     // ToDo: Метод click, которая принимает x, y
 
     // В зависисмости от нажатых клавиш изменяем среду
@@ -48,8 +69,12 @@ export class World {
     get_items() {
         // ToDo: Возвращать массив лазеров
 
-        return [this.player, this.lasers, new Info(this.player.x, this.player.y)]
+        return [this.player, this.lasers, this.enemies, new Info(this.player.x, this.player.y, this.player.health, this.player.score)]
     }
 
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 

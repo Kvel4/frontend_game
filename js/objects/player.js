@@ -6,9 +6,10 @@ export class Player {
         this.x = x;
         this.y = y;
         this.r = 10;
+        this.score = 0;
+        this.health = 3;
     }
     teleport(){
-
         if (this.x > document.documentElement.clientWidth){
             this.x = 0
         }

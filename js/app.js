@@ -6,6 +6,7 @@ import '../styles/index.css'
 
 // Создаём наш мир
 const world = new World();
+setInterval(world.add_enemy, 1000);
 
 // http://pixijs.download/dev/docs/PIXI.Application.html
 const renderer = PIXI.autoDetectRenderer(
@@ -16,30 +17,49 @@ const renderer = PIXI.autoDetectRenderer(
 // Нажата ли кнопка
 const keys = {"w": false, "s": false, "a": false, "d": false};
 
+
 function animate() {
     // Позволяет рисовать каждый тик
     requestAnimationFrame(animate);
 
     // http://pixijs.download/dev/docs/PIXI.Container.html
     const stage = new PIXI.Container();
-
-    world.get_items().forEach((item) => {
+    let response = world.get_items()
+    response.forEach((item) => {
         // Достаём отрисованный объект
-        if (Array.isArray(item)){
+        if (response.indexOf(item) === 1){
+            // TODO важный способ фильтра массива
+            item = item.filter(laser => !(laser.cur_x === laser.dist_x && laser.dist_y === laser.cur_y)).forEach(laser => stage.addChild(laser.draw()));
             item.forEach((laser) => {
-                if (laser.cur_x === laser.dist_x && laser.dist_y === laser.cur_y){
-                    item.shift()
-                }
                 stage.addChild(laser.draw())
             });
+            console.log(1)
+
         }
-        else {
+        else if(response.indexOf(item) === 2) {
+            item.forEach((enemy) => {
+                if (((Math.abs(world.player.x - enemy.cur_x)) ** 2 + (Math.abs(world.player.y - enemy.cur_y)) ** 2) ** 0.5 <= world.player.r + enemy.r) {
+                    world.player.health -= 1;
+                    world.delete_enemy(enemy);
+                    if (world.player.health <= 0){
+                        world.death();
+                    }
+                }
+                response[1].forEach((laser) => {
+                    if (((Math.abs(laser.cur_x - enemy.cur_x)) ** 2 + (Math.abs(laser.cur_y - enemy.cur_y)) ** 2) ** 0.5 <= laser.r + enemy.r) {
+                        world.delete_enemy(enemy);
+                        world.delete_laser(laser);
+                    }
+                });
+                stage.addChild(enemy.draw(world.player.x, world.player.y));
+            });
+        }
+        else{
             const graphics = item.draw();
             stage.addChild(graphics)
         }
         // Добавляем его в Container
     });
-
     // Отрисовываем в этом тике всё
     renderer.render(stage);
 
@@ -69,14 +89,15 @@ function setCanvasSize() {
     canvas.style.width = window.innerWidth + 'px';
     canvas.style.height = window.innerHeight + 'px';
     renderer.resize(window.innerWidth, window.innerHeight);
-    world.player.x = window.innerWidth / 2;
-    world.player.y = window.innerHeight / 2;
+    if (world.player.x === 0 && world.player.y === 0) {
+        world.player.x = window.innerWidth / 2;
+        world.player.y = window.innerHeight / 2;
+    }
 }
 
 window.onresize = (ev) => {
     setCanvasSize();
 };
-
 
 // Начинаем рисовать!
 animate();
