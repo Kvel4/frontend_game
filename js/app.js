@@ -24,17 +24,15 @@ function animate() {
 
     // http://pixijs.download/dev/docs/PIXI.Container.html
     const stage = new PIXI.Container();
-    let response = world.get_items()
+    let response = world.get_items();
     response.forEach((item) => {
         // Достаём отрисованный объект
         if (response.indexOf(item) === 1){
-            // TODO важный способ фильтра массива
-            item = item.filter(laser => !(laser.cur_x === laser.dist_x && laser.dist_y === laser.cur_y)).forEach(laser => stage.addChild(laser.draw()));
-            item.forEach((laser) => {
+            // Удаляем долетевшие лазеры
+            world.lasers = item.filter(laser => !(laser.cur_x === laser.dist_x && laser.dist_y === laser.cur_y));
+            world.lasers.forEach((laser) => {
                 stage.addChild(laser.draw())
             });
-            console.log(1)
-
         }
         else if(response.indexOf(item) === 2) {
             item.forEach((enemy) => {
