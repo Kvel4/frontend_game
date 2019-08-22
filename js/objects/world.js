@@ -1,19 +1,26 @@
 import {Player} from "./player";
 import {Info} from "./info"
+import {Laser} from "./laser";
 
 
 export class World {
     constructor() {
         // Создадим игрока
         this.player = new Player(0, 0)
+        this.lasers = [new Laser(0, 0, 0, 0)]
+        // создадид массив лазеров
 
-        // ToDo: Создать массив лазеров
     }
 
+
+    click(x, y){
+        this.lasers.push(new Laser(this.player.x, this.player.y, x, y))
+    }
     // ToDo: Метод click, которая принимает x, y
 
     // В зависисмости от нажатых клавиш изменяем среду
     move = (keys) => {
+        this.player.teleport();
         // Для каждого ключа в объекте
         Object.keys(keys).map((key) => {
             // Если нажата кнопка
@@ -40,7 +47,8 @@ export class World {
 
     get_items() {
         // ToDo: Возвращать массив лазеров
-        return [this.player, new Info(this.player.x, this.player.y)]
+
+        return [this.player, this.lasers, new Info(this.player.x, this.player.y)]
     }
 
 }

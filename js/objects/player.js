@@ -7,7 +7,21 @@ export class Player {
         this.y = y;
         this.r = 10;
     }
+    teleport(){
 
+        if (this.x > document.documentElement.clientWidth){
+            this.x = 0
+        }
+        if (this.y > document.documentElement.clientHeight){
+            this.y = 0
+        }
+        if (this.x < 0){
+            this.x = document.documentElement.clientWidth
+        }
+        if (this.y < 0){
+            this.y = document.documentElement.clientHeight
+        }
+    }
     draw() {
         // http://pixijs.download/dev/docs/PIXI.Graphics.html
         const graphics = new PIXI.Graphics();

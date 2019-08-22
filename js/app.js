@@ -25,10 +25,19 @@ function animate() {
 
     world.get_items().forEach((item) => {
         // Достаём отрисованный объект
-        const graphics = item.draw();
-
+        if (Array.isArray(item)){
+            item.forEach((laser) => {
+                if (laser.cur_x === laser.dist_x && laser.dist_y === laser.cur_y){
+                    item.shift()
+                }
+                stage.addChild(laser.draw())
+            });
+        }
+        else {
+            const graphics = item.draw();
+            stage.addChild(graphics)
+        }
         // Добавляем его в Container
-        stage.addChild(graphics)
     });
 
     // Отрисовываем в этом тике всё
@@ -37,7 +46,6 @@ function animate() {
     // Смотрим на нажатые кнопки
     world.move(keys);
 }
-
 document.addEventListener('keydown', (ev) => {
     keys[ev.key] = true;
 }, false);
@@ -48,6 +56,7 @@ document.addEventListener('keyup', (ev) => {
 
 document.addEventListener('click', (ev) => {
     // ToDo: Вызывать метод click у World
+    world.click(ev.clientX, ev.clientY)
     console.log(ev);
 }, false);
 
