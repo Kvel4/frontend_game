@@ -8,6 +8,7 @@ export class Player {
         this.r = 10;
         this.score = 0;
         this.health = 3;
+        this.ammo = 20;
     }
     teleport(){
         if (this.x > document.documentElement.clientWidth){

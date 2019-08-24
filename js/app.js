@@ -7,6 +7,8 @@ import '../styles/index.css'
 // Создаём наш мир
 const world = new World();
 setInterval(world.add_enemy, 1000);
+setInterval(world.add_healpack, 10000);
+setInterval(world.add_ammopack, 10000);
 
 // http://pixijs.download/dev/docs/PIXI.Application.html
 const renderer = PIXI.autoDetectRenderer(
@@ -52,6 +54,26 @@ function animate() {
                 stage.addChild(enemy.draw(world.player.x, world.player.y));
             });
         }
+        else if (response.indexOf(item) === 3){
+            item.forEach(healpack => {
+                if (((world.player.x - healpack.cur_x) ** 2 + (world.player.y - healpack.cur_y) ** 2) ** 0.5 < world.player.r + healpack.r){
+                    world.delete_healpack(healpack)
+                }
+                else {
+                    stage.addChild(healpack.draw())
+                }
+            })
+        }
+        else if (response.indexOf(item) === 4) {
+            item.forEach(ammopack => {
+                if (((world.player.x - ammopack.cur_x) ** 2 + (world.player.y - ammopack.cur_y) ** 2) ** 0.5 < world.player.r + ammopack.r){
+                    world.delete_ammopack(ammopack)
+                }
+                else {
+                    stage.addChild(ammopack.draw())
+                }
+            });
+        }
         else{
             const graphics = item.draw();
             stage.addChild(graphics)
@@ -74,7 +96,7 @@ document.addEventListener('keyup', (ev) => {
 
 document.addEventListener('click', (ev) => {
     // ToDo: Вызывать метод click у World
-    world.click(ev.clientX, ev.clientY)
+    world.click(ev.clientX, ev.clientY);
     console.log(ev);
 }, false);
 

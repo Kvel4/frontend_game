@@ -1,6 +1,6 @@
 export class Info {
-    constructor(playerX, playerY, health, score) {
-        this.text = `PlayerX: ${playerX}\nPlayerY: ${playerY}\nHealth: ${health}\nScore: ${score}`
+    constructor(playerX, playerY, health, ammo, score) {
+        this.text = `PlayerX: ${playerX}\nPlayerY: ${playerY}\nHealth: ${health}\nAmmo: ${ammo}\nScore: ${score}`
     }
 
     draw() {

@@ -2,6 +2,8 @@ import {Player} from "./player";
 import {Info} from "./info"
 import {Laser} from "./laser";
 import {Enemy} from "./enemy"
+import {HealPack} from "./healpack"
+import {AmmoPack} from "./ammopack";
 
 
 export class World {
@@ -10,20 +12,62 @@ export class World {
         this.player = new Player(0, 0);
         this.lasers = [];
         this.enemies = [];
+        this.healpacks = [];
+        this.ammopacks = [];
         // создадид массив лазеров
 
     }
     click(x, y){
-        this.lasers.push(new Laser(this.player.x, this.player.y, x, y))
+        if (this.player.ammo > 0) {
+            this.player.ammo -= 1;
+            this.lasers.push(new Laser(this.player.x, this.player.y, x, y))
+        }
+    };
+
+    add_healpack = () => {
+        let x = getRandomInt(0, window.innerWidth);
+        let y = getRandomInt(0, window.innerHeight);
+        while (((this.player.x - x)** 2 + (this.player.y) ** 2) ** 0.5 < 110){
+            x = getRandomInt(0, window.innerWidth);
+            y = getRandomInt(0, window.innerHeight);
+        }
+        this.healpacks.push(new HealPack(x,y));
+    };
+    delete_healpack = (healpack) => {
+        this.healpacks.splice(this.healpacks.indexOf(healpack), 1);
+        this.player.health += 1
+    };
+    add_ammopack = () => {
+        let x = getRandomInt(0, window.innerWidth);
+        let y = getRandomInt(0, window.innerHeight);
+        while (((this.player.x - x)** 2 + (this.player.y) ** 2) ** 0.5 < 110){
+            x = getRandomInt(0, window.innerWidth);
+            y = getRandomInt(0, window.innerHeight);
+        }
+        this.ammopacks.push(new AmmoPack(x,y));
+    };
+
+    delete_ammopack = (ammopack) => {
+        this.ammopacks.splice(this.ammopacks.indexOf(ammopack), 1);
+        this.player.ammo += 10
     };
 
     add_enemy = () => {
-        this.enemies.push(new Enemy(getRandomInt(0, window.innerWidth), getRandomInt(0, window.innerHeight)))
+        let x = getRandomInt(0, window.innerWidth);
+        let y = getRandomInt(0, window.innerHeight);
+        while (((this.player.x - x)** 2 + (this.player.y) ** 2) ** 0.5 < 110){
+            x = getRandomInt(0, window.innerWidth);
+            y = getRandomInt(0, window.innerHeight);
+        }
+        this.enemies.push(new Enemy(x,y))
 
     };
     death = () => {
         this.lasers = [];
         this.enemies = [];
+        this.ammopacks = [];
+        this.healpacks = [];
+        this.player.ammo = 20;
         this.player.health = 3;
         this.player.score = 0;
         this.player.x = window.innerWidth / 2;
@@ -69,7 +113,8 @@ export class World {
     get_items() {
         // ToDo: Возвращать массив лазеров
 
-        return [this.player, this.lasers, this.enemies, new Info(this.player.x, this.player.y, this.player.health, this.player.score)]
+        return [this.player, this.lasers, this.enemies, this.healpacks, this.ammopacks,
+            new Info(this.player.x, this.player.y, this.player.health, this.player.ammo, this.player.score)]
     }
 
 }
